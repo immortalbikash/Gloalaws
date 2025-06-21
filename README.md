@@ -8,35 +8,29 @@ This README indicates that the GlobalShop e-commerce platform can be installed w
 ## How to Deploy the Stack
 
 ### 1. Set Up the Network (VPC & Subnets)
-- Create a VPC with CIDR: `10.0.0.0/16`
+- Create a VPC: `10.0.0.0/16`
 - Create 2 **public subnets**: `10.0.1.0/24` and `10.0.2.0/24`
 - Create 2 **private subnets**: `10.0.3.0/24` and `10.0.4.0/24`
-- Create and attach an Internet Gateway
-- Create a NAT Gateway in one of the public subnets
-- Update route tables accordingly for internet and private access
+- Make an Internet gateway and connect it
+- Establish a NAT gateway in a public subnet
+- Route tables should be updated appropriately for private and internet access 
 
 ### 2. Create Security Groups
-- ALB Security Group: Allow ports 80 (HTTP) and 443 (HTTPS) from anywhere
-- ECS Security Group: Allow traffic from ALB only
-- RDS Security Group: Allow MySQL traffic (port 3306) from ECS only
+- Allow port 80(HTTP) and 433(HTTPS) from any location with ALB security group.
+- ECS Security Group: Only let ALB Traffic
+- RDS Security Group: only accept MYSQL traffic from ECS on port 336
 
 ### 3. ECS Cluster and Task Definition
-- Create an ECS Cluster using AWS Fargate
-- Define a Task with:
-  - Docker image URL
-  - Port mapping: 80
-  - 0.5 vCPU and 1 GB memory
-- Enable CloudWatch logging
+- use AWS Fargate to establish an ECS cluster.
+- Define a Task with: Docker image URL, Port mapping: 80, 0.5 vCPU and 1 GB memory, Enable CloudWatch logging
 
 ### 4. Databases and Caching
 - **RDS**: Create a MySQL DB in private subnets, Multi-AZ enabled
-- **DynamoDB**: Create a table for cart/session data
+- **DynamoDB**: Create a table for cart and session data
 - **Redis (ElastiCache)**: Set up for caching product and cart data
 
 ### 5. S3 Buckets
-- Create two buckets:
-  - `globalshop-assets` (for images/files)
-  - `globalshop-logs` (for logs)
+- Create two buckets:`globalshop-assets` (for images/files), and `globalshop-logs` (for logs)
 - Enable encryption and add lifecycle rules (e.g., move to Glacier after 30 days)
 
 ### 6. Load Balancer Setup
