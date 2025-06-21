@@ -2,10 +2,6 @@
 
 # GlobalShop – AWS Deployment Guide
 
-This document provides instructions on how to deploy, test, and destroy the AWS infrastructure for the GlobalShop application. This project uses services like VPC, ECS (Fargate), RDS, S3, ElastiCache, DynamoDB, ALB, and a CI/CD pipeline.
-
----
-
 ## Prerequisites
 
 - AWS Account (with appropriate permissions)
