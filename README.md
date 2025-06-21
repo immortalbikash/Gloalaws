@@ -9,7 +9,7 @@ This README indicates that the GlobalShop e-commerce platform can be installed w
 
 ### 1. Set Up the Network (VPC & Subnets)
 - Create a VPC with CIDR: `10.0.0.0/16`
-- Create 2 public subnets: `10.0.1.0/24` and `10.0.2.0/24`
+- Create 2 **public subnets**: `10.0.1.0/24` and `10.0.2.0/24`
 - Create 2 **private subnets**: `10.0.3.0/24` and `10.0.4.0/24`
 - Create and attach an Internet Gateway
 - Create a NAT Gateway in one of the public subnets
