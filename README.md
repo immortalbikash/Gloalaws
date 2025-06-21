@@ -52,7 +52,7 @@ This README indicates that the GlobalShop e-commerce platform can be installed w
 
 ---
 
-## 🧪 How to Test the Stack
+## How to Test the Stack
 
 After everything is deployed:
 
@@ -63,7 +63,7 @@ After everything is deployed:
 
 ---
 
-## 🧹 How to Destroy the Stack
+## How to Destroy the Stack
 
 Once you're done, follow these steps to clean everything up:
 
