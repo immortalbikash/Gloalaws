@@ -3,6 +3,7 @@
 1) ✅ How to Deploy the Stack?
 # GlobalShop – AWS Stack Deployment, Testing, and Destroy Guide
 1) How to Deploy the Stack?
+   
 The setup of the networking environment should be started in order to implement the GlobalShop application on AWS. This involves the establishment of Virtual Private Cloud (VPC) of 10.0.0.0/16CIDR, two public subnets thereof and two private subnets on varied availability zones (e.g. us-east-1a and us-east-2b). Internet Gateway is then created and connected to the VPC so that the internet could be accessed by public subnets, and a NAT Gateway is inserted in one of the subnets in the public subnets so that resources in the private subnets can access the internet. In that presence since the public traffic would come in through the Internet Gateway and the private through the NAT Gateway, route tables would be configured in this manner.
 
 After installation of networking, one creates security groups next. The Application Load Balancer (ALB) will be added with the one security group to permit internet traffic through ports 80 and 443. The other security group is utilized in ECS activities and it permits traffic to be ingress through the ALB. The RDS MySQL database is secured by a third security group and opens the traffic only to ECS over port 3306.
