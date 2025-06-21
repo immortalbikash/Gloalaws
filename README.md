@@ -4,23 +4,13 @@ This README indicates that the GlobalShop e-commerce platform can be installed w
 
 ---
 
-## ✅ What You'll Need
 
-Before you begin, make sure you have:
-- An AWS account with necessary permissions
-- AWS CLI installed and configured
-- Basic knowledge of services like ECS, RDS, and S3
-- Git installed (for pushing code to CodeCommit)
-- (Optional) Docker installed locally
-
----
-
-## 🚀 How to Deploy the Stack
+## How to Deploy the Stack
 
 ### 1. Set Up the Network (VPC & Subnets)
 - Create a VPC with CIDR: `10.0.0.0/16`
-- Create two **public subnets**: `10.0.1.0/24` and `10.0.2.0/24`
-- Create two **private subnets**: `10.0.3.0/24` and `10.0.4.0/24`
+- Create 2 public subnets: `10.0.1.0/24` and `10.0.2.0/24`
+- Create 2 **private subnets**: `10.0.3.0/24` and `10.0.4.0/24`
 - Create and attach an Internet Gateway
 - Create a NAT Gateway in one of the public subnets
 - Update route tables accordingly for internet and private access
