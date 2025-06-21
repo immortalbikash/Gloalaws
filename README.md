@@ -17,12 +17,14 @@ The last deployment stage is deployment of CI/CD pipeline. The source code repos
 ---
 
 2) 🧪 How to Test the Stack?
+
 Testing the deployed AWS stack involves several key checks. First, the Application Load Balancer’s DNS URL should be opened in a web browser to confirm that the GlobalShop application is running and accessible to users. The ECS console is checked to verify that tasks are running without issues and are placed in the correct subnets. CloudWatch logs are then reviewed to ensure that application logs are being collected properly, which helps with debugging and monitoring.
 
 Such services as ECS, ALB, and RDS should be tracked according to the metrics of the CPU usage, the amount of memory used, and the number of requests made. The load balancer must have healths checks that are passing, which means that the application is responsive. Besides, one can make a trivial modification in the code and push it to the CodeCommit repository to check the CI/CD configuration. This must initiate the codePipeline to reconstruct the image and redeploying the service ensuring that the automation is running properly.
 
 ---
 3) 🧹 How to Destroy the stack?
+
 When the deployment is no longer needed, the stack should be destroyed carefully to avoid unnecessary AWS charges. The teardown process begins by deleting the ECS service and the ECS cluster itself. Next, the Application Load Balancer and its associated target group and listeners should be removed. After that, backend services like the RDS database instance, DynamoDB table, and ElastiCache Redis cluster must be deleted.
 
 The CI/CD elements, such as CodePipeline, CodeBuild project and CodeCommit repository, should be deleted as well. The emptying of the S3 buckets before deleting them is necessary because AWS does not permit deletion of the non-empty buckets. After deleting the services, the last part is cleaning of the networking resources which include NAT Gateway, Internet Gateway, subnets, route tables and eventually VPC.
