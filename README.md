@@ -1,74 +1,29 @@
-# 🌐 GlobalShop – AWS Deployment Guide
+# 🌐 GlobalShop – AWS Stack Deployment, Testing, and Destroy Guide
 
-This README indicates that the GlobalShop e-commerce platform can be installed with the help of AWS services such as VPC, ECS, RDS, S3, ElastiCache, DynamoDB, Load Balancer, and CI/CD tools. It also includes the mechanism of testing the setup and destroying the resources safely when you have completed the setup.
+1) ✅ How to Deploy the Stack?
+# GlobalShop – AWS Stack Deployment, Testing, and Destroy Guide
+ 1) How to Deploy the Stack?
+   The setup of the networking environment should be started in order to implement the GlobalShop application on AWS. This involves the establishment of Virtual Private Cloud (VPC) of 10.0.0.0/16CIDR, two public subnets thereof and two private subnets on varied availability zones (e.g. us-east-1a and us-east-2b). Internet Gateway is then created and connected to the VPC so that the internet could be accessed by public subnets, and a NAT Gateway is inserted in one of the subnets in the public subnets so that resources in the private subnets can access the internet. In that presence since the public traffic would come in through the Internet Gateway and the private through the NAT Gateway, route tables would be configured in this manner.
 
----
+  After installation of networking, one creates security groups next. The Application Load Balancer (ALB) will be added with the one security group to permit internet traffic through ports 80 and 443. The other security group is utilized in ECS activities and it permits traffic to be ingress through the ALB. The RDS MySQL database is secured by a third security group and opens the traffic only to ECS over port 3306.
 
+  Once the security is established an ECS Cluster running on the AWS Fargate is generated which enables us to operate on containers without server management. Task definition is made which contains required CPU and memory(e.g. 0.5 vCPU and 1 GB RAM), the container image and port bindings(typically port 80). Monitoring is set to watch at the cloudWatch logging. The ECS service is then proceeded as being deployed in the subnets privately and linked to the ALB in order to have load balancing.
 
-## How to Deploy the Stack
+Then, the backend is configured by provisioning an RDS MySQL database in isolated subnets, and Multi-AZ deployment is implemented to provide server availability and encryption is activated. A DynamoDB table is also created to save session or cart data also and we set ElastiCache (Redis) to store data that is frequently hit like all the product data and it has a better performance because of setting up ElastiCache. The application assets and application logs are stored in S3 buckets and the storage costs are controlled by encryption and lifecycle policies.
 
-### 1. Set Up the Network (VPC & Subnets)
-- Create a VPC: `10.0.0.0/16`
-- Create 2 **public subnets**: `10.0.1.0/24` and `10.0.2.0/24`
-- Create 2 **private subnets**: `10.0.3.0/24` and `10.0.4.0/24`
-- Make an Internet gateway and connect it
-- Establish a NAT gateway in a public subnet
-- Route tables should be updated appropriately for private and internet access 
-
-### 2. Create Security Groups
-- Allow port 80(HTTP) and 433(HTTPS) from any location with ALB security group.
-- ECS Security Group: Only let ALB Traffic
-- RDS Security Group: only accept MYSQL traffic from ECS on port 336
-
-### 3. ECS Cluster and Task Definition
-- use AWS Fargate to establish an ECS cluster.
-- Define a Task with: Docker image URL, Port mapping: 80, 0.5 vCPU and 1 GB memory, Enable CloudWatch logging
-
-### 4. Databases and Caching
-- **RDS**: Create a MySQL DB in private subnets, Multi-AZ enabled
-- **DynamoDB**: Create a table for cart and session data
-- **Redis (ElastiCache)**: Set up for caching product and cart data
-
-### 5. S3 Buckets
-- Create two buckets:`globalshop-assets` (for images/files), and `globalshop-logs` (for logs)
-- Enable encryption and add lifecycle rules (e.g., move to Glacier after 30 days)
-
-### 6. Load Balancer Setup
-- Create an Application Load Balancer (ALB) in the public subnets
-- Create a Target Group and register ECS service
-- Add listeners for HTTP and HTTPS
-
-### 7. CI/CD Pipeline
-- Create a CodeCommit repository and push your app code
-- Set up CodeBuild to build the container image
-- Use CodePipeline to automate the flow:
-  CodeCommit → CodeBuild → ECS Deployment
+The last deployment stage is deployment of CI/CD pipeline. The source code repository entitled as a CodeCommit is created to hosts the source code, then, the building of the Docker image is invoked as a CodeBuild project. A CodePipeline is set up to automatically push new deployments to repository whenever the code is pushed. This architecture makes sure uninterrupted provision of application updates to ECS.
 
 ---
 
-## How to Test the Stack
+2) 🧪 How to Test the Stack?
+Testing the deployed AWS stack involves several key checks. First, the Application Load Balancer’s DNS URL should be opened in a web browser to confirm that the GlobalShop application is running and accessible to users. The ECS console is checked to verify that tasks are running without issues and are placed in the correct subnets. CloudWatch logs are then reviewed to ensure that application logs are being collected properly, which helps with debugging and monitoring.
 
-After everything is deployed:
-
-- Open the ALB DNS URL in a browser to check if the site is running
-- Check CloudWatch logs for ECS to confirm containers are working
-- Monitor RDS and ECS metrics for CPU and memory usage
-- Try updating the code and pushing to CodeCommit — confirm if the pipeline rebuilds and redeploys the app
+Such services as ECS, ALB, and RDS should be tracked according to the metrics of the CPU usage, the amount of memory used, and the number of requests made. The load balancer must have healths checks that are passing, which means that the application is responsive. Besides, one can make a trivial modification in the code and push it to the CodeCommit repository to check the CI/CD configuration. This must initiate the codePipeline to reconstruct the image and redeploying the service ensuring that the automation is running properly.
 
 ---
+3) 🧹 How to Destroy the stack?
+When the deployment is no longer needed, the stack should be destroyed carefully to avoid unnecessary AWS charges. The teardown process begins by deleting the ECS service and the ECS cluster itself. Next, the Application Load Balancer and its associated target group and listeners should be removed. After that, backend services like the RDS database instance, DynamoDB table, and ElastiCache Redis cluster must be deleted.
 
-## How to Destroy the Stack
+The CI/CD elements, such as CodePipeline, CodeBuild project and CodeCommit repository, should be deleted as well. The emptying of the S3 buckets before deleting them is necessary because AWS does not permit deletion of the non-empty buckets. After deleting the services, the last part is cleaning of the networking resources which include NAT Gateway, Internet Gateway, subnets, route tables and eventually VPC.
 
-Once you're done, follow these steps to clean everything up:
-
-1. **Delete ECS services and the cluster**
-2. **Delete the Load Balancer and Target Group**
-3. **Delete RDS and ElastiCache clusters**
-4. **Delete the DynamoDB table**
-5. **Delete the S3 buckets (empty them first!)**
-6. **Delete the CI/CD pipeline and CodeCommit repo**
-7. **Delete the VPC, subnets, NAT, IGW, and route tables**
-
-This helps avoid unnecessary charges on your AWS account.
-
----
+It is also suggested to remove all the existing CloudWatch log groups and alarms that are not maintained, but this step is optional. Upon doing this, all the resources will be severed securely and that new charges on idle infrastructure will not be charged.
