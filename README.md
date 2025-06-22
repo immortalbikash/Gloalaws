@@ -25,7 +25,7 @@ Such services as ECS, ALB, and RDS should be tracked according to the metrics of
 ---
 3) 🧹 How to Destroy the stack?
 
-When the deployment is no longer needed, the stack should be destroyed carefully to avoid unnecessary AWS charges. The teardown process begins by deleting the ECS service and the ECS cluster itself. Next, the Application Load Balancer and its associated target group and listeners should be removed. After that, backend services like the RDS database instance, DynamoDB table, and ElastiCache Redis cluster must be deleted.
+When the deployment is no longer needed, the stack should be destroyed carefully to avoid unnecessary AWS charges. The teardown process begins by deleting the ECS service and the ECS cluster itself.Then the target group and listeners along with the Application Load Balancer are to be deleted. Subsequently, the backend services, such as RDS database instance, DynamoDB table, and an ElastiCache Redis cluster will have to be removed.
 
 The CI/CD elements like CodePipeline, CodeBuild project and CodeCommit repository should also be deleted. The emptying of the S3 buckets before deleting them is necessary because AWS does not permit deletion of the non-empty buckets. After deleting the services, the last part is cleaning of the networking resources which include NAT Gateway, Internet Gateway, subnets, route tables and eventually VPC.
 
